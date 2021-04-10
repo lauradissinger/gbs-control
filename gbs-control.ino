@@ -114,6 +114,9 @@ PersWiFiManager persWM(server, dnsServer);
 // but only "D7" and "D6" have been tested so far
 #define digitalRead(x) ((GPIO_REG_READ(GPIO_IN_ADDRESS) >> x) & 1)
 
+// What is the default OSR mode you want?  1, 2, or 4
+#define DEFAULT_OSR_MODE 2
+
 // feed the current measurement, get back the moving average
 uint8_t getMovingAverage(uint8_t item)
 {
@@ -3313,7 +3316,7 @@ void doPostPresetLoadSteps() {
 
       GBS::ADC_FLTR::write(3);            // 5_03 4/5 ADC filter 3=40, 2=70, 1=110, 0=150 Mhz
       GBS::PLLAD_KS::write(2);            // 5_16
-      setOverSampleRatio(4, true);        // prepare only = true
+      setOverSampleRatio(DEFAULT_OSR_MODE, true);        // prepare only = true
       GBS::IF_SEL_WEN::write(0);          // 1_02 0; 0 for SD, 1 for EDTV
       if (rto->inputIsYpBpR) {            // todo: check other videoStandardInput in component vs rgb
         GBS::IF_HS_TAP11_BYPS::write(0);  // 1_02 4 Tap11 LPF bypass in YUV444to422 
@@ -6715,7 +6718,7 @@ void runSyncWatcher()
 
           latchPLLAD();
           delay(2);
-          setOverSampleRatio(4, false);  // false = do apply // will auto decrease to max possible factor
+          setOverSampleRatio(DEFAULT_OSR_MODE, false);  // false = do apply // will auto decrease to max possible factor
           SerialM.print(F("(H-PLL) rate: ")); SerialM.print(currentPllRate);
           SerialM.print(F(" state: ")); SerialM.println(rto->HPLLState);
           delay(100);
